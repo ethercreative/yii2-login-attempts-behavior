@@ -31,7 +31,7 @@ public function behaviors()
     $behaviors = parent::behaviors();
 
     $behaviors[] = [
-        'class' => '\ethercreative\loginattempts\LoginAttemptBehavior'],
+        'class' => '\ethercreative\loginattempts\LoginAttemptBehavior',
 
         // Amount of attempts in the given time period
         'attempts' => 3,
