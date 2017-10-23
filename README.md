@@ -43,10 +43,15 @@ public function behaviors()
         // the duration, in seconds, to disable login after exceeding `attemps`
         'disableDuration' => 900,
 
-        // 
+        // the attribute used as the key in the database
+        // and add errors to
         'usernameAttribute' => 'email',
-        'passwordAttribute'
-        'message'
+
+        // the attribute to check for errors
+        'passwordAttribute' => 'password',
+
+        // the validation message to return to `usernameAttribute`
+        'message' => 'Login disabled',
     ];
 
     return $behaviors;
