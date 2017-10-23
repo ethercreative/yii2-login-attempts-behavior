@@ -1,0 +1,19 @@
+{
+    "name": "ethercreative/yii2-login-attempts-behavior",
+    "description": "Disable login after multiple failures.",
+    "keywords": ["yii2", "behavior"],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "authors": [
+        {
+            "name": "Matt Edmonston",
+            "email": "matt@ethercreative.co.uk"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "ethercreative\\loginattempts\\": "src"
+        }
+    }
+}
