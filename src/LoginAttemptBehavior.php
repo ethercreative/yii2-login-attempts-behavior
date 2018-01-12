@@ -4,6 +4,8 @@ namespace ethercreative\loginattempts;
 
 use Yii;
 use yii\base\Model;
+use yii\db\Expression;
+use yii\helpers\Inflector;
 
 use ethercreative\loginattempts\LoginAttempt;
 
@@ -13,7 +15,11 @@ class LoginAttemptBehavior extends \yii\base\Behavior
 
     public $duration = 300;
 
+    public $durationUnit = 'second';
+
     public $disableDuration = 900;
+
+    public $disableDurationUnit = 'second';
 
     public $usernameAttribute = 'email';
 
@@ -22,6 +28,15 @@ class LoginAttemptBehavior extends \yii\base\Behavior
     public $message = 'You have exceeded the password attempts.';
 
     private $_attempt;
+
+    private $_safeUnits = [
+        'second',
+        'minute',
+        'day',
+        'week',
+        'month',
+        'year',
+    ];
 
     public function events()
     {
@@ -55,9 +70,9 @@ class LoginAttemptBehavior extends \yii\base\Behavior
             $this->_attempt->amount += 1;
 
             if ($this->_attempt->amount >= $this->attempts)
-                $this->_attempt->reset_at = date('r', strtotime('+' . $this->disableDuration . ' seconds'));
+                $this->_attempt->reset_at = $this->intervalExpression($this->disableDuration, $this->disableDurationUnit);
             else
-                $this->_attempt->reset_at = date('r', strtotime('+' . $this->duration . ' seconds'));
+                $this->_attempt->reset_at = $this->intervalExpression($this->duration, $this->durationUnit);
 
             $this->_attempt->save();
         }
@@ -66,5 +81,23 @@ class LoginAttemptBehavior extends \yii\base\Behavior
     public function getKey()
     {
         return sha1($this->owner->{$this->usernameAttribute});
+    }
+
+    private function intervalExpression(int $length, $unit = 'second')
+    {
+        $unit = Inflector::singularize(strtolower($unit));
+
+        if (!in_array($unit, $this->_safeUnits))
+        {
+            $safe = join(', ', $this->_safeUnits);
+            throw new \Exception("$unit is not an allowed unit. Safe units are: [$safe]");
+        }
+
+        if (Yii::$app->db->driverName === 'pgsql')
+            $interval = "'$length $unit'";
+        else
+            $interval = "$length $unit";
+
+        return new Expression("NOW() + INTERVAL $interval");
     }
 }
