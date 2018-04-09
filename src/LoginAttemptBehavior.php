@@ -2,41 +2,25 @@
 
 namespace ethercreative\loginattempts;
 
-use Yii;
+use yii\base\Behavior;
 use yii\base\Model;
-use yii\db\Expression;
-use yii\helpers\Inflector;
+use yii\db\ActiveRecord;
 
-use ethercreative\loginattempts\LoginAttempt;
-
-class LoginAttemptBehavior extends \yii\base\Behavior
+/**
+ * Class LoginAttemptBehavior
+ * @package ethercreative\loginattempts
+ * @property ActiveRecord $owner
+ */
+class LoginAttemptBehavior extends Behavior
 {
-    public $attempts = 3;
-
-    public $duration = 300;
-
-    public $durationUnit = 'second';
-
-    public $disableDuration = 900;
-
-    public $disableDurationUnit = 'second';
-
-    public $usernameAttribute = 'email';
-
+    public $attempts = 5;
+    public $usernameAttribute = 'username';
     public $passwordAttribute = 'password';
 
     public $message = 'You have exceeded the password attempts.';
 
+    /** @var LoginAttempt */
     private $_attempt;
-
-    private $_safeUnits = [
-        'second',
-        'minute',
-        'day',
-        'week',
-        'month',
-        'year',
-    ];
 
     public function events()
     {
@@ -48,56 +32,45 @@ class LoginAttemptBehavior extends \yii\base\Behavior
 
     public function beforeValidate()
     {
-        if ($this->_attempt = LoginAttempt::find()->where(['key' => $this->key])->andWhere(['>', 'reset_at', date('r')])->one())
-        {
-            if ($this->_attempt->amount >= $this->attempts)
-            {
-                $this->owner->addError($this->usernameAttribute, $this->message);
-            }
+        if ($this->getAttempt() && $this->getAttempt()->amount > $this->attempts) {
+            $this->owner->addError($this->usernameAttribute, $this->message);
         }
     }
 
     public function afterValidate()
     {
-        if ($this->owner->hasErrors($this->passwordAttribute))
-        {
-            if (!$this->_attempt)
-            {
-                $this->_attempt = new LoginAttempt;
-                $this->_attempt->key = $this->key;
+        if ($this->owner->hasErrors($this->passwordAttribute)) {
+            $attempt = $this->getAttempt();
+
+            if (!$attempt) {
+                $attempt = new LoginAttempt;
+                $attempt->key = $this->getKey();
             }
 
-            $this->_attempt->amount += 1;
-
-            if ($this->_attempt->amount >= $this->attempts)
-                $this->_attempt->reset_at = $this->intervalExpression($this->disableDuration, $this->disableDurationUnit);
-            else
-                $this->_attempt->reset_at = $this->intervalExpression($this->duration, $this->durationUnit);
-
-            $this->_attempt->save();
+            $attempt->amount += 1;
+            $attempt->save();
         }
     }
 
+    /**
+     * @return string
+     */
     public function getKey()
     {
         return sha1($this->owner->{$this->usernameAttribute});
     }
 
-    private function intervalExpression(int $length, $unit = 'second')
+    /**
+     * @return LoginAttempt
+     */
+    public function getAttempt()
     {
-        $unit = Inflector::singularize(strtolower($unit));
-
-        if (!in_array($unit, $this->_safeUnits))
-        {
-            $safe = join(', ', $this->_safeUnits);
-            throw new \Exception("$unit is not an allowed unit. Safe units are: [$safe]");
+        if (!isset($this->_attempt)) {
+            $this->_attempt = LoginAttempt::find()
+                ->where(['key' => $this->getKey()])
+                ->one();
         }
 
-        if (Yii::$app->db->driverName === 'pgsql')
-            $interval = "'$length $unit'";
-        else
-            $interval = "$length $unit";
-
-        return new Expression("NOW() + INTERVAL $interval");
+        return $this->_attempt;
     }
 }

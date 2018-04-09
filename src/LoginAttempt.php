@@ -4,6 +4,12 @@ namespace ethercreative\loginattempts;
 
 use yii\behaviors\TimestampBehavior;
 
+/**
+ * Class LoginAttempt
+ * @package ethercreative\loginattempts
+ * @property int $amount
+ * @property string $key
+ */
 class LoginAttempt extends \yii\db\ActiveRecord
 {
     public static function tableName()
