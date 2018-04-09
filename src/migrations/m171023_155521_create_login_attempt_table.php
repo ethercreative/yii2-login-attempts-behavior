@@ -6,7 +6,7 @@ class m171023_155521_create_login_attempt_table extends Migration
 {
     public function safeUp()
     {
-        $this->createTable('login_attempt', [
+        $this->createTable('{{%login_attempt}}', [
             'id' => $this->primaryKey(),
             'key' => $this->string()->notNull(),
             'amount' => $this->integer(2)->defaultValue(1),
