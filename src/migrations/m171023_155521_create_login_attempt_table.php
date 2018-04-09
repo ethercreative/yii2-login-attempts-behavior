@@ -22,6 +22,6 @@ class m171023_155521_create_login_attempt_table extends Migration
 
     public function safeDown()
     {
-        $this->dropTable('login_attempt');
+        $this->dropTable('{{%login_attempt}}');
     }
 }
