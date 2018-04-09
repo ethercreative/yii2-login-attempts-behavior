@@ -6,7 +6,7 @@ class LoginAttempt extends \yii\db\ActiveRecord
 {
     public static function tableName()
     {
-        return 'login_attempt';
+        return '{{%login_attempt}}';
     }
 
     public function behaviors()
