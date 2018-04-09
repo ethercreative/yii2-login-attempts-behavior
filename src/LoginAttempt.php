@@ -14,7 +14,8 @@ class LoginAttempt extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-            TimestampBehavior::className(),
+            'class' => TimestampBehavior::className(),
+            'value' => new \yii\db\Expression('NOW()'),
         ];
     }
 
