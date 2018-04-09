@@ -35,20 +35,7 @@ public function behaviors()
 
         // Amount of attempts in the given time period
         'attempts' => 3,
-
-        // the duration, for a regular failure to be stored for
-        // resets on new failure
-        'duration' => 300,
-
-        // the unit to use for the duration
-        'durationUnit' = 'second',
-
-        // the duration, to disable login after exceeding `attemps`
-        'disableDuration' => 900,
-
-        // the unit to use for the disable duration
-        'disableDurationUnit' => 'second',
-
+        
         // the attribute used as the key in the database
         // and add errors to
         'usernameAttribute' => 'email',
