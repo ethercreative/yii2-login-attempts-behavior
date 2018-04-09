@@ -41,7 +41,7 @@ public function behaviors()
         'duration' => 300,
 
         // the unit to use for the duration
-        'durationUnit' = 'second',
+        'durationUnit' => 'second',
 
         // the duration, to disable login after exceeding `attemps`
         'disableDuration' => 900,
