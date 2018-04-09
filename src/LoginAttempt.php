@@ -3,8 +3,16 @@
 namespace ethercreative\loginattempts;
 
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
+use yii\db\Expression;
 
-class LoginAttempt extends \yii\db\ActiveRecord
+/**
+ * Class LoginAttempt
+ * @package ethercreative\loginattempts
+ * @property int $amount
+ * @property string $key
+ */
+class LoginAttempt extends ActiveRecord
 {
     public static function tableName()
     {
@@ -14,8 +22,10 @@ class LoginAttempt extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
-            'class' => TimestampBehavior::className(),
-            'value' => new \yii\db\Expression('NOW()'),
+            [
+                'class' => TimestampBehavior::className(),
+                'value' => new Expression('NOW()'),
+            ]
         ];
     }
 
