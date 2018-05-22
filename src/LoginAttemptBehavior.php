@@ -83,7 +83,7 @@ class LoginAttemptBehavior extends \yii\base\Behavior
         return sha1($this->owner->{$this->usernameAttribute});
     }
 
-    private function intervalExpression(int $length, $unit = 'second')
+    private function intervalExpression($length, $unit = 'second')
     {
         $unit = Inflector::singularize(strtolower($unit));
 
