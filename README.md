@@ -1,3 +1,5 @@
+## ⚠️ This repo is no longer being maintained.
+
 Yii2 Login Attempts Behavior
 ========================
 
